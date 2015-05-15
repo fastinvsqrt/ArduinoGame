@@ -27,10 +27,25 @@ public class BoardMover : MonoBehaviour
     /// </summary>
     public GameObject Board = null;
 
+    /// <summary>
+    /// The ball.
+    /// </summary>
+    public GameObject Ball = null;
+
     private float totalRotationX;
     private float totalRotationZ;
     private Quaternion initialRotation;
+    private Vector3 initialBallPosition;
     private Controller controller;
+
+    /// <summary>
+    /// The method that will be called when the game has been won.
+    /// </summary>
+    public void OnWin()
+    {
+        Debug.Log( "You won!" );
+        Reset();
+    }
 
     /// <summary>
     /// Starts the board mover.
@@ -40,6 +55,7 @@ public class BoardMover : MonoBehaviour
         totalRotationX = 0.0f;
         totalRotationZ = 0.0f;
         initialRotation = Board.transform.rotation;
+        initialBallPosition = Ball.transform.position;
         controller = gameObject.GetComponent<Controller>();
     }
 
@@ -89,5 +105,20 @@ public class BoardMover : MonoBehaviour
         Board.transform.rotation = initialRotation;
         Board.transform.Rotate( Vector3.forward, totalRotationX );
         Board.transform.Rotate( Vector3.right,   totalRotationZ );
+    }
+
+    /// <summary>
+    /// Resets the board mover.
+    /// </summary>
+    void Reset()
+    {
+        // reset the board rotation
+        totalRotationX = 0.0f;
+        totalRotationZ = 0.0f;
+        Board.transform.rotation = initialRotation;
+
+        // reset the ball position and velocity
+        Ball.transform.position = initialBallPosition;
+        Ball.GetComponent<Rigidbody>().velocity = new Vector3();
     }
 }
