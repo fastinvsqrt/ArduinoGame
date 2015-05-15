@@ -34,6 +34,7 @@ public class BoardMover : MonoBehaviour
 
     private float totalRotationX;
     private float totalRotationZ;
+    private float startTime;
     private Quaternion initialRotation;
     private Vector3 initialBallPosition;
     private Controller controller;
@@ -43,7 +44,8 @@ public class BoardMover : MonoBehaviour
     /// </summary>
     public void OnWin()
     {
-        Debug.Log( "You won!" );
+        float elapsed = Time.time - startTime;
+        Debug.LogFormat( "You win! It took you {0} seconds.", elapsed );
         Reset();
     }
 
@@ -52,6 +54,7 @@ public class BoardMover : MonoBehaviour
     /// </summary>
     void Start()
     {
+        startTime = Time.time;
         totalRotationX = 0.0f;
         totalRotationZ = 0.0f;
         initialRotation = Board.transform.rotation;
@@ -112,6 +115,8 @@ public class BoardMover : MonoBehaviour
     /// </summary>
     void Reset()
     {
+        startTime = Time.time;
+
         // reset the board rotation
         totalRotationX = 0.0f;
         totalRotationZ = 0.0f;
