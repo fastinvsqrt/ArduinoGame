@@ -1,0 +1,93 @@
+﻿using UnityEngine;
+using System;
+using System.Collections;
+
+/// <summary>
+/// Defines a script used to move the board.
+/// </summary>
+public class BoardMover : MonoBehaviour
+{
+    /// <summary>
+    /// The rotation speed.
+    /// </summary>
+    public float RotateSpeed = 30.0f;
+
+    /// <summary>
+    /// The maximum amount of X rotation allowed.
+    /// </summary>
+    public float MaxRotationX = 30.0f;
+
+    /// <summary>
+    /// The maximum amount of Z rotation allowed.
+    /// </summary>
+    public float MaxRotationZ = 30.0f;
+
+    /// <summary>
+    /// The board to move.
+    /// </summary>
+    public GameObject Board = null;
+
+    private float totalRotationX;
+    private float totalRotationZ;
+    private Quaternion initialRotation;
+    private Controller controller;
+
+    /// <summary>
+    /// Starts the board mover.
+    /// </summary>
+    void Start()
+    {
+        totalRotationX = 0.0f;
+        totalRotationZ = 0.0f;
+        initialRotation = Board.transform.rotation;
+        controller = gameObject.GetComponent<Controller>();
+    }
+
+    /// <summary>
+    /// Updates the board mover.
+    /// </summary>
+    void Update()
+    {
+        float rotationX = 0.0f;
+        float rotationZ = 0.0f;
+
+        // check for input
+        if ( Input.GetKey( KeyCode.LeftArrow ) || controller.Left )
+        {
+            rotationX += RotateSpeed * Time.deltaTime;
+        }
+        if ( Input.GetKey( KeyCode.RightArrow ) || controller.Right )
+        {
+            rotationX -= RotateSpeed * Time.deltaTime;
+        }
+        if ( Input.GetKey( KeyCode.UpArrow ) || controller.Up )
+        {
+            rotationZ += RotateSpeed * Time.deltaTime;
+        }
+        if ( Input.GetKey( KeyCode.DownArrow ) || controller.Down )
+        {
+            rotationZ -= RotateSpeed * Time.deltaTime;
+        }
+
+        // add to our total rotations
+        totalRotationX += rotationX;
+        totalRotationZ += rotationZ;
+
+        // ensure we're not rotating too far
+        if ( Math.Abs( totalRotationX ) > MaxRotationX )
+        {
+            totalRotationX = Math.Sign( totalRotationX ) * MaxRotationX;
+            rotationX = 0.0f;
+        }
+        if ( Math.Abs( totalRotationZ ) > MaxRotationZ )
+        {
+            totalRotationZ = Math.Sign( totalRotationZ ) * MaxRotationZ;
+            rotationZ = 0.0f;
+        }
+
+        // rotate the board
+        Board.transform.rotation = initialRotation;
+        Board.transform.Rotate( Vector3.forward, totalRotationX );
+        Board.transform.Rotate( Vector3.right,   totalRotationZ );
+    }
+}
